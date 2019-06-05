@@ -37,13 +37,10 @@ Circle circle[quantity];
 
 void DrawCircle(SDL_Window * window, SDL_Renderer * renderer)
 {
-	SDL_SetRenderDrawColor(renderer, 50, 50, 150, 0);
-	SDL_RenderClear(renderer);
 
 	SDL_Surface* myImage = SDL_LoadBMP("1.bmp");
 	SDL_SetColorKey(myImage, SDL_TRUE, SDL_MapRGB(myImage->format, 255, 0, 255));
 	SDL_Texture* texture = SDL_CreateTextureFromSurface(renderer, myImage);
-
 
 	for (int i = 0; i < quantity; i++)
 	{
@@ -52,7 +49,7 @@ void DrawCircle(SDL_Window * window, SDL_Renderer * renderer)
 		sprintf_s(text, "%d", (int)circle[i].r);
 		DrawText(window, renderer, ball, text);
 	}
-	SDL_RenderPresent(renderer);
+
 	SDL_DestroyTexture(texture);
 }
 
@@ -104,7 +101,7 @@ bool collision()
 }
 #pragma endregion
 
-	TTF_Font* my_font;
+TTF_Font* my_font;
 void DrawText(SDL_Window* window, SDL_Renderer* renderer, SDL_Rect rect, char* text)
 {
 	SDL_Color fore_color = { 255,255,255 };
@@ -112,9 +109,9 @@ void DrawText(SDL_Window* window, SDL_Renderer* renderer, SDL_Rect rect, char* t
 
 	SDL_Surface* textSurface = TTF_RenderText_Shaded(my_font, text, fore_color, back_color);
 	SDL_SetColorKey(textSurface, SDL_TRUE, SDL_MapRGB(textSurface->format, 0, 0, 0));
-	SDL_Texture* texture = SDL_CreateTextureFromSurface(renderer, textSurface);
-	SDL_RenderCopy(renderer, texture, NULL, &rect);
-	SDL_DestroyTexture(texture);
+	SDL_Texture* textTexture = SDL_CreateTextureFromSurface(renderer, textSurface);
+	SDL_RenderCopy(renderer, textTexture, NULL, &rect);
+	SDL_DestroyTexture(textTexture);
 	SDL_FreeSurface(textSurface);
 }
 
@@ -198,16 +195,20 @@ int main(int argc, char** argv)
 			if (event.button.button == SDL_BUTTON_LEFT)
 				mouse = true;
 		}
-
-		sprintf_s(text, "%d", points);
-
-		DrawText(window, renderer, rectpoints, text);
-		SDL_RenderPresent(renderer);
-
+				
+		
 		if (draw)
 		{
+			SDL_SetRenderDrawColor(renderer, 50, 50, 150, 0);
+			SDL_RenderClear(renderer);
+
 			CreateCircle();
 			DrawCircle(window, renderer);
+			
+			sprintf_s(text, "%d", points);
+			
+			DrawText(window, renderer, rectpoints, text);
+			
 			draw = false;
 		}
 		if (mouse)
@@ -215,15 +216,24 @@ int main(int argc, char** argv)
 			int tmp = isPointInside(event.button.x, event.button.y);
 			if (tmp)
 			{
+				SDL_SetRenderDrawColor(renderer, 50, 50, 150, 0);
+				SDL_RenderClear(renderer);
+
 				points += (int)circle[tmp - 1].r;
+				sprintf_s(text, "%d", points);
+				DrawText(window, renderer, rectpoints, text);
+
 				DelCircle(tmp - 1);
 				CreateCircle();
 				n--;
 				DrawCircle(window, renderer);
 				n++;
+
 			}
 			mouse = false;
 		}
+
+		SDL_RenderPresent(renderer);
 
 	}
 	//================================================EndGame—ycle=============================================================================================//
