@@ -41,6 +41,7 @@ void DrawCircle(SDL_Window * window, SDL_Renderer * renderer)
 	SDL_Surface* myImage = SDL_LoadBMP("1.bmp");
 	SDL_SetColorKey(myImage, SDL_TRUE, SDL_MapRGB(myImage->format, 255, 0, 255));
 	SDL_Texture* texture = SDL_CreateTextureFromSurface(renderer, myImage);
+	SDL_FreeSurface(myImage);
 
 	for (int i = 0; i < quantity; i++)
 	{
